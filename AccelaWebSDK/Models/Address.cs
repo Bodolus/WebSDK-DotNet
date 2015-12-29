@@ -80,7 +80,7 @@ namespace Accela.Web.SDK.Models
         public string fullAddress { get; set; }
         public string addressLine1 { get; set; }
         //public string houseNumberStart { get; set; }
-        public Primary primary { get; set; }
+        public string isPrimary { get; set; }
         public string unitEnd { get; set; }
         public string county { get; set; }
         public AddressTypeFlag addressTypeFlag { get; set; }
