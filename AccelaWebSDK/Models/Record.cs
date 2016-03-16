@@ -203,11 +203,12 @@ namespace Accela.Web.SDK.Models
         public string initiatedProduct { get; set; }
         public ReportedType reportedType { get; set; }
         public string inspectorId { get; set; }
+        public Dictionary<string, string> customForm { get; set; }
     }
 
     public class RelatedRecord
     {
-        public string id {get; set; }
+        public string id { get; set; }
         public string relationship { get; set; }
         public string customId { get; set; }
         public string trackingId { get; set; }
