@@ -529,6 +529,41 @@ namespace Accela.Web.SDK
         }
         #endregion
 
+        #region Record CustomTables
+        public CustomTable[] GetRecordCustomTables(string recordId, string token)
+        {
+            try
+            {
+                // Validate
+                if (String.IsNullOrWhiteSpace(recordId))
+                {
+                    throw new Exception("Null Record Id provided");
+                }
+                RequestValidator.ValidateToken(token);
+
+                // get Custom Fields
+                string url = apiUrl + ConfigurationReader.GetValue("GetRecordCustomTables").Replace("{recordIds}", recordId);
+                if (this.language != null)
+                    url += "?lang=" + this.language;
+                RESTResponse response = HttpHelper.SendGetRequest(url, token, this.appId);
+
+                // create response
+                CustomTable[] customTables = new CustomTable[0];
+                customTables = (CustomTable[])HttpHelper.ConvertToSDKResponse(customTables, response);
+                return customTables;
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in Get Record Custom Table :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in Get Record Custom Table :"));
+            }
+        }
+
+        #endregion
+
         #region Record Documents
         public List<Document> GetRecordDocuments(string recordId, string token, string fields = null)
         {
