@@ -291,7 +291,34 @@ namespace Accela.Web.SDK
             }
         }
 
-        public void DeleteRecord(string recordId, string token) { }
+        public void DeleteRecord(string recordIds, string token)
+        {
+            try
+            {
+                // Validate
+                RequestValidator.ValidateToken(token);
+                if (recordIds == null)
+                {
+                    throw new Exception("Null request provided");
+                }
+                if (string.IsNullOrEmpty(recordIds))
+                    throw new Exception("Null record Id Provided");
+
+                // Update 
+                string url = apiUrl + ConfigurationReader.GetValue("DeleteRecord").Replace("{recordIds}", recordIds);
+                if (this.language != null)
+                    url += "?lang=" + this.language;
+                RESTResponse response = HttpHelper.SendDeleteRequest(url, token, this.appId);
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in Update Record :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in Update Record :"));
+            }
+        }
 
         #endregion
 
