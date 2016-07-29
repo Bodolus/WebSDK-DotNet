@@ -322,6 +322,132 @@ namespace Accela.Web.SDK
 
         #endregion
 
+        #region Record Addresses
+        public ResultDataPaged<Address> GetRecordAddresses(string recordId, string token, string fields = null, int offset = -1, int limit = -1)
+        {
+            try
+            {
+                // Validate
+                if (String.IsNullOrWhiteSpace(recordId))
+                {
+                    throw new Exception("Null Record Id provided");
+                }
+                RequestValidator.ValidateToken(token);
+
+                // get contacts
+                StringBuilder url = new StringBuilder(apiUrl + ConfigurationReader.GetValue("GetRecordAddresses").Replace("{recordIds}", recordId).Replace("{limit}", limit.ToString()).Replace("{offset}", offset.ToString()));
+                if (this.language != null || fields != null)
+                    url.Append("?");
+                if (this.language != null)
+                    url.Append("lang=").Append(this.language);
+                if (this.language != null && fields != null)
+                    url.Append("&");
+                if (fields != null)
+                    url.Append("fields=").Append(fields);
+
+                RESTResponse response = HttpHelper.SendGetRequest(url.ToString(), token, this.appId);
+                PaginationInfo paginationInfo = null;
+
+                // create response
+                List<Address> addresses = new List<Address>();
+                addresses = (List<Address>)HttpHelper.ConvertToSDKResponse(addresses, response);
+                ResultDataPaged<Address> results = new ResultDataPaged<Address> { Data = addresses, PageInfo = paginationInfo };
+                return results;
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in Get Record Addresses :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in Get Record Addresses :"));
+            }
+        }
+
+        public List<Result> CreateRecordAddress(List<Address> addresses, string recordId, string token, string fields = null)
+        {
+            try
+            {
+                // Validate
+                RequestValidator.ValidateToken(token);
+                addresses = RequestValidator.ValidateAddressesForCreate(addresses, recordId);
+                if (String.IsNullOrWhiteSpace(recordId))
+                {
+                    throw new Exception("Null Record Id provided");
+                }
+
+                // Create 
+                StringBuilder url = new StringBuilder(apiUrl + ConfigurationReader.GetValue("CreateRecordAddress").Replace("{recordId}", recordId));
+                if (this.language != null || fields != null)
+                    url.Append("?");
+                if (this.language != null)
+                    url.Append("lang=").Append(this.language);
+                if (this.language != null && fields != null)
+                    url.Append("&");
+                if (fields != null)
+                    url.Append("fields=").Append(fields);
+
+                RESTResponse response = HttpHelper.SendPostRequest(url.ToString(), addresses, token, this.appId);
+
+                // create response
+                List<Result> result = new List<Result>();
+                return (List<Result>)HttpHelper.ConvertToSDKResponse(result, response);
+
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in Create Record Address :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in Create Record Address :"));
+            }
+        }
+
+        public Address UpdateRecordAddress(Address address, string recordId, string token, string fields = null)
+        {
+            try
+            {
+                // Validate
+                RequestValidator.ValidateToken(token);
+                if (String.IsNullOrWhiteSpace(recordId))
+                {
+                    throw new Exception("Null Record Id provided");
+                }
+                if (address == null)
+                {
+                    throw new Exception("Null address provided");
+                }
+
+                // Update 
+                StringBuilder url = new StringBuilder(apiUrl + ConfigurationReader.GetValue("UpdateRecordAddress").Replace("{recordId}", recordId).Replace("{id}", address.id.ToString()));
+                if (this.language != null || fields != null)
+                    url.Append("?");
+                if (this.language != null)
+                    url.Append("lang=").Append(this.language);
+                if (this.language != null && fields != null)
+                    url.Append("&");
+                if (fields != null)
+                    url.Append("fields=").Append(fields);
+
+                RESTResponse response = HttpHelper.SendPutRequest(url.ToString(), address, token, this.appId);
+
+                // create response
+                return (Address)HttpHelper.ConvertToSDKResponse(address, response);
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in Update Record Contact :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in Update Record Contact :"));
+            }
+        }
+
+
+        #endregion
+
         #region Record Contacts
         public ResultDataPaged<Contact> GetRecordContacts(string recordId, string token, string fields = null, int offset = -1, int limit = -1)
         {
@@ -586,6 +712,36 @@ namespace Accela.Web.SDK
             catch (Exception exception)
             {
                 throw new Exception(HttpHelper.HandleException(exception, "Error in Get Record Custom Table :"));
+            }
+        }
+        public CustomTable[] UpdateRecordCustomTables(CustomTable[] customTables, string recordId, string token)
+        {
+            try
+            {
+                // Validate
+                if (String.IsNullOrWhiteSpace(recordId))
+                {
+                    throw new Exception("Null Record Id provided");
+                }
+                RequestValidator.ValidateToken(token);
+
+                // put Custom Fields
+                string url = apiUrl + ConfigurationReader.GetValue("UpdateRecordCustomTables").Replace("{recordIds}", recordId);
+                if (this.language != null)
+                    url += "?lang=" + this.language;
+                RESTResponse response = HttpHelper.SendPutRequest(url.ToString(), customTables, token, this.appId);
+
+                // create response
+                customTables = (CustomTable[])HttpHelper.ConvertToSDKResponse(customTables, response);
+                return customTables;
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in Update Record Custom Table :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in Update Record Custom Table :"));
             }
         }
 

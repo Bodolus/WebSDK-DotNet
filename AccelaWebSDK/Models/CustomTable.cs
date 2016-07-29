@@ -15,5 +15,6 @@ namespace Accela.Web.SDK.Models
     {
         public string id { get; set; }
         public Dictionary<string,string> fields { get; set; }
+        public string action { get; set; }
     }
 }

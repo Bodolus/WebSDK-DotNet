@@ -14,6 +14,24 @@ namespace Accela.Web.SDK
                 throw new Exception("Please provide an authentication token");
         }
 
+        public static List<Address> ValidateAddressesForCreate(List<Address> addresses, string recordId)
+        {
+            if (addresses == null)
+            {
+                throw new Exception("Null request provided");
+            }
+            else
+            {
+                foreach (Address address in addresses)
+                {
+                    if (address == null)
+                        throw new Exception("Null contact provided");
+                }
+            }
+            
+            return addresses;
+        }
+
         public static List<Contact> ValidateContactsForCreate(List<Contact> contacts, string recordId)
         {
             if (contacts == null)
