@@ -162,6 +162,42 @@ namespace Accela.Web.SDK
                 throw new Exception(HttpHelper.HandleException(exception, "Error in Get Record :"));
             }
         }
+        
+        public Record GetRecordByCustomId(string customId, string token)
+        {
+            try
+            {
+                // Validate
+                RequestValidator.ValidateToken(token);
+                if (String.IsNullOrWhiteSpace(customId))
+                {
+                    throw new Exception("Null Custom Id provided");
+                }
+
+                // get record summary
+                string url = apiUrl + ConfigurationReader.GetValue("GetRecordByCustomId").Replace("{customId}", customId);
+                if (this.language != null)
+                    url += "?lang=" + this.language;
+                RESTResponse response = HttpHelper.SendGetRequest(url, token, this.appId);
+
+                // create response
+                List<Record> records = new List<Record>();
+                records = (List<Record>)HttpHelper.ConvertToSDKResponse(records, response);
+
+                if (records != null && records.Count == 1)
+                    return records[0];
+
+                return null;
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in Get Record By CustomId :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in Get Record By CustomId :"));
+            }
+        }
 
         public ResultDataPaged<Record> SearchRecords(string token, RecordFilter filter, string fields = null, int offset = -1, int limit = -1, string sortField = null, string sortOrder = null, string expand = null)
         {
@@ -1024,6 +1060,40 @@ namespace Accela.Web.SDK
             catch (Exception exception)
             {
                 throw new Exception(HttpHelper.HandleException(exception, "Error in Update Workflow tasks :"));
+            }
+        }
+        #endregion
+
+        #region Inspections
+        public List<InspectionType> GetDefaultInspTypes(string recordId, string token)
+        {
+            try
+            {
+                // Validate
+                RequestValidator.ValidateToken(token);
+                if (String.IsNullOrWhiteSpace(recordId))
+                {
+                    throw new Exception("Null Record Id provided");
+                }
+
+                // Query ConstructAPI for the Record's default available Inspection Types based on Default Insp Group associated
+                StringBuilder url = new StringBuilder(apiUrl + ConfigurationReader.GetValue("GetDefaultInspTypes").Replace("{recordId}", recordId));
+
+                RESTResponse response = HttpHelper.SendGetRequest(url.ToString(), token, this.appId);
+
+                // create response
+                List<Inspection2> insps = new List<Inspection2>();
+                insps = (List<Inspection2>)HttpHelper.ConvertToSDKResponse(insps, response);
+
+                return insps[0].inspectionTypes;
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in GetDefaultInspTypes :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in GetDefaultInspTypes :"));
             }
         }
         #endregion

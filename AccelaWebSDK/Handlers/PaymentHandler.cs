@@ -15,7 +15,7 @@ namespace Accela.Web.SDK
         {
         }
 
-        public PaymentResult MakePayment(string token, PaymentInfo paymentInfo)
+        public PaymentResult GetPayments(string token, PaymentInfo paymentInfo)
         {
             try
             {
@@ -44,6 +44,104 @@ namespace Accela.Web.SDK
             catch (Exception exception)
             {
                 throw new Exception(HttpHelper.HandleException(exception, "Error in Make Payment :"));
+            }
+        }
+
+        public PaymentResult VoidPayment(string token, string paymentId, PaymentMisc paymentMisc)
+        {
+            try
+            {
+                // Validate
+                RequestValidator.ValidateToken(token);
+                if (string.IsNullOrWhiteSpace(paymentId) || paymentMisc == null)
+                {
+                    throw new Exception("Null payment information provided");
+                }
+
+                // void payment
+                string url = apiUrl + ConfigurationReader.GetValue("VoidPayment").Replace("{paymentId}", paymentId);
+                
+                RESTResponse response = HttpHelper.SendPutRequest(url.ToString(), paymentMisc, token, this.appId);
+
+                // create response
+                PaymentResult paymentVoidResult = new PaymentResult();
+                paymentVoidResult = (PaymentResult)HttpHelper.ConvertToSDKResponse(paymentVoidResult, response);
+                return paymentVoidResult;
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in Void Payment :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in Void Payment :"));
+            }
+        }
+
+        public List<ETransactionInfo> GetETransactionInfo(string token, string TRANSACTION_NBR)
+        {
+            StringBuilder url = null;
+
+            try
+            {
+                // Validate
+                RequestValidator.ValidateToken(token);
+                if (string.IsNullOrWhiteSpace(TRANSACTION_NBR))
+                {
+                    throw new Exception("Null transaction number provided");
+                }
+
+                // get eTransaction Info
+                url = new StringBuilder(apiUrl).Replace("v4", "v3").Append(ConfigurationReader.GetValue("GetETransactionInfo"));
+
+                TransactionNBR transNBR = new TransactionNBR() { TRANSACTION_NBR = TRANSACTION_NBR };
+
+                RESTResponse response = HttpHelper.SendPostRequest(url.ToString(), transNBR, token, this.appId);
+
+                // create response
+                List<ETransactionInfo> paymentDetails = new List<ETransactionInfo>();
+                paymentDetails = (List<ETransactionInfo>) HttpHelper.ConvertToSDKResponse(paymentDetails, response);
+
+                return paymentDetails;
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in GetETransactionInfo call :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in GetETransactionInfo call :"));
+            }
+        }
+
+        public int ProcessRemittance(string token, ProcessRemittanceData inputData)
+        {
+            try
+            {
+                // Validate
+                RequestValidator.ValidateToken(token);
+                if (inputData == null)
+                {
+                    throw new Exception("Null input data provided");
+                }
+
+                // get eTransaction Info
+                string url = apiUrl + ConfigurationReader.GetValue("ProcessRemittance");
+
+                RESTResponse response = HttpHelper.SendPostRequest(url.ToString(), inputData, token, this.appId);
+
+                // create response
+                string RESULT = string.Empty;
+                RESULT = (string) HttpHelper.ConvertToSDKResponse(RESULT, response);
+                return int.Parse(RESULT);
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in GetETransactionInfo call :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in GetETransactionInfo call :"));
             }
         }
 

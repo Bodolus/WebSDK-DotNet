@@ -106,6 +106,7 @@ namespace Accela.Web.SDK.Models
         public string neighberhoodPrefix { get; set; }
         public StreetSuffix streetSuffix { get; set; }
         public HouseFractionStart houseFractionStart { get; set; }
+        public string streetAddress { get; set; }
         public int streetStart { get; set; }
         public string streetName { get; set; }
         public double distance { get; set; }

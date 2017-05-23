@@ -95,6 +95,43 @@ namespace Accela.Web.SDK
             }
         }
 
+        public bool isAgencyEnvironmentAvailable(string agencyName, string environment)
+        {
+            try
+            {
+                // Validate
+                if (String.IsNullOrWhiteSpace(agencyName))
+                {
+                    throw new Exception("Null Agency Name provided");
+                }
+                RequestValidator.ValidateAppID(this.appId);
+
+                // Get Environment Status
+                string url = apiUrl + ConfigurationReader.GetValue("GetAgencyEnvironmentStatus").Replace("{name}", agencyName).Replace("{env}", environment);
+                RESTResponse response = HttpHelper.SendGetRequest(url, null, this.appId);
+
+                BoolWrapper boolWrap = new BoolWrapper();
+                //insp = (Inspection)HttpHelper.ConvertToSDKResponse(insp, response);
+
+                if (response != null && response.Result != null && response.Status == 200)
+                {
+                    boolWrap = (BoolWrapper) HttpHelper.ConvertToSDKResponse(boolWrap, response);
+                    return boolWrap.isAvailable;
+                }
+                else
+                    return false;
+
+            }
+            catch (WebException webException)
+            {
+                throw new Exception(HttpHelper.HandleWebException(webException, "Error in isAgencyEnvironmentAvailable :"));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(HttpHelper.HandleException(exception, "Error in isAgencyEnvironmentAvailable :"));
+            }
+        }
+
         //public Response GetRecordTypesForAgency(string module, string token, int limit = -1, int offset = -1)
         //{
         //    try

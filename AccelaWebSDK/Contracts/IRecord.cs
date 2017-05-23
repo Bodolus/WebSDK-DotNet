@@ -11,6 +11,7 @@ namespace Accela.Web.SDK
     {
         // Records
         Record GetRecord(string recordId, string token);
+        Record GetRecordByCustomId(string customId, string token);
         ResultDataPaged<Record> GetRecords(string token, string filter, int offset = -1, int limit = -1);
         Record CreateRecord(Record record, string token);
         Record CreateRecordInitialize(Record record, string token, string isFeeEstimate = null);

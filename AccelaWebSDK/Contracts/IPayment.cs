@@ -10,7 +10,8 @@ namespace Accela.Web.SDK
 {
     public interface IPayment
     {
-        PaymentResult MakePayment(string token, PaymentInfo paymentInfo);
+        PaymentResult GetPayments(string token, PaymentInfo paymentInfo);
+        PaymentResult VoidPayment(string token, string paymentId, PaymentMisc paymentMisc);
         List<FeeSchedule> GetFeeSchedule(string token, string feeScheduleId, string fields = null, string version = null);
     }
 }

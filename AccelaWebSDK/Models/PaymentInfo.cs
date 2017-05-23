@@ -62,4 +62,46 @@ namespace Accela.Web.SDK.Models
         public string status { get; set; }
         public string transactionId { get; set; }
     }
+
+    public class PaymentMisc
+    {
+        public string comment { get; set; }
+        public PaymentReasonDetail reason { get; set; }
+    }
+
+    public class PaymentReasonDetail
+    {
+        public string value { get; set; }
+        public string text { get; set; }
+    }
+
+    public class TransactionNBR
+    {
+        public string TRANSACTION_NBR { get; set; }
+    }
+
+    public class ETransactionInfo
+    {
+        public string B1_ALT_ID { get; set; }
+        public string PAYMENT_SEQ_NBR { get; set; }
+        public string BATCH_TRANSACTION_NBR { get; set; }
+        public string RECEIPT_NBR { get; set; }
+        public string INVOICE_NBR { get; set; }
+        public string PAYMENT_STATUS { get; set; }
+        public string PAYMENT_AMOUNT { get; set; }
+        public string F4PAYMENT_UDF1 { get; set; }
+        public string F4PAYMENT_UDF2 { get; set; }
+        public string F4PAYMENT_UDF3 { get; set; }
+        public string F4PAYMENT_UDF4 { get; set; }
+    }
+
+    public class ProcessRemittanceData
+    {
+        public string ALT_ID { get; set; }
+        public long PMT_SEQ_NUM { get; set; }
+        public string CLEAR_DATE { get; set; }
+        public string STATUS { get; set; }
+        public string RECEIVED_TYPE { get; set; }
+
+    }
 }

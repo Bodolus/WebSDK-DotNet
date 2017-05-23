@@ -14,6 +14,12 @@ namespace Accela.Web.SDK
                 throw new Exception("Please provide an authentication token");
         }
 
+        public static void ValidateAppID(string appID)
+        {
+            if (string.IsNullOrEmpty(appID))
+                throw new Exception("please provide an appID");
+        }
+
         public static List<Address> ValidateAddressesForCreate(List<Address> addresses, string recordId)
         {
             if (addresses == null)
