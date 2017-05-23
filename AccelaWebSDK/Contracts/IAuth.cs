@@ -10,8 +10,8 @@ namespace Accela.Web.SDK
     public interface IAuth
     {
         void Login(string redirectUrl, string scope, string agencyName, string agencyEnvironment);
-        CurrentUserProfile GetTokenAndCurrentUserProfile(string redirectUrl);
+        //CurrentUserProfile GetTokenAndCurrentUserProfile(string redirectUrl);
         UserProfile GetUserProfile(string token, string fields = null);
-        Token GetToken(string redirectUrl, string code);
+        Token GetToken(string username, string password, string env, string scope);
     }
 }

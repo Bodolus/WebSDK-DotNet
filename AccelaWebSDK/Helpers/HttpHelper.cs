@@ -86,7 +86,7 @@ namespace Accela.Web.SDK
         public static RESTResponse SendPostRequest(string url, Object request, string token, string appId)
         {
             HttpWebRequest httpRequest = PrepareRequest(url, "POST", appId, token);
-            string requestString = Newtonsoft.Json.JsonConvert.SerializeObject(request, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore });
+            string requestString = Newtonsoft.Json.JsonConvert.SerializeObject(request, new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd", NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore });
 
             // Send
             using (StreamWriter s = new StreamWriter(httpRequest.GetRequestStream()))
@@ -221,7 +221,10 @@ namespace Accela.Web.SDK
             request.ContentType = contentType;
             request.Accept = accept;
             request.Headers.Add(appIdHeader, appId);
-            request.Headers.Add("Authorization", token);
+
+            if (token != null)
+                request.Headers.Add("Authorization", token);
+
             return request;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace Accela.Web.SDK.Models
         public string id { get; set; }
         public int trackingId { get; set; }
         public string customId { get; set; }
+        public string value { get; set; }
     }
 
     public class RecordType
@@ -203,11 +205,12 @@ namespace Accela.Web.SDK.Models
         public string initiatedProduct { get; set; }
         public ReportedType reportedType { get; set; }
         public string inspectorId { get; set; }
+        public Dictionary<string, string> customForm { get; set; }
     }
 
     public class RelatedRecord
     {
-        public string id {get; set; }
+        public string id { get; set; }
         public string relationship { get; set; }
         public string customId { get; set; }
         public string trackingId { get; set; }
@@ -300,6 +303,14 @@ namespace Accela.Web.SDK.Models
             {
                 this.type = RequestValidator.BuildRecordTypeFromTypeId(this.type, this.type.id);
             }
+        }
+
+        public override string ToString()
+        {
+            string result = "";
+            foreach (PropertyInfo propertyInfo in this.GetType().GetProperties())
+                result += string.Format("{0}={1} ", propertyInfo.Name, propertyInfo.GetValue(this));
+            return result;
         }
     }
 }

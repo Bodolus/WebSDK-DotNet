@@ -1,5 +1,6 @@
 ﻿using Accela.Web.SDK.Models;
 using System;
+using System.Configuration;
 using System.Net;
 using System.Text;
 using System.Web;
@@ -13,28 +14,30 @@ namespace Accela.Web.SDK
         {
         }
 
-        public Token GetToken(string redirectUrl, string code)
+        public Token GetToken(string username, string password, string env, string scope)
         {
             // Validate
-            if (string.IsNullOrEmpty(redirectUrl))
+            if (string.IsNullOrEmpty(username))
                 throw new Exception("Please provide a valid url to redirect on authentication");
-            if (string.IsNullOrEmpty(code))
+            if (string.IsNullOrEmpty(password))
                 throw new Exception("Please provide a valid code for authentication");
 
             // Build Request
             Token token = new Token();
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(this.ConfigProvider.GetValue("Accela.WebSDK.OAuth.TokenExchangeUrlTokenExchangeURL"));
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(this.ConfigProvider.GetValue("Accela.WebSDK.OAuth.TokenExchangeUrl"));
             request.ContentType = "application/x-www-form-urlencoded";
-            request.Headers.Add(ConfigurationReader.GetValue("HAppId"), this.appId);
+            //request.Headers.Add(ConfigurationReader.GetValue("HAppId"), this.appId);
 
-            StringBuilder json = new StringBuilder(ConfigurationReader.GetValue("CodeExchangeRequest"));
+            StringBuilder json = new StringBuilder(ConfigurationReader.GetValue("TokenRequest"));
             json = json.Replace("{appId}", this.appId);
             json = json.Replace("{appSecret}", this.appSecret);
-            json = json.Replace("{redirectURI}", redirectUrl);
-            json = json.Replace("{code}", code);
+            json = json.Replace("{username}", username);
+            json = json.Replace("{password}", password);
+            json = json.Replace("{env}", env);
+            json = json.Replace("{scope}", scope);
 
             // Get Token
-            token = (Token)HttpHelper.SendPostRequest(request, json.ToString(), token);
+            token = (Token) HttpHelper.SendPostRequest(request, json.ToString(), token);
             return token;
         }
 
@@ -76,35 +79,35 @@ namespace Accela.Web.SDK
             HttpContext.Current.Response.Redirect(GetAuthUrlForRedirect(agencyName, agencyEnvironment, redirectUrl, scope));
         }
 
-        public CurrentUserProfile GetTokenAndCurrentUserProfile(string redirectUrl)
-        {
-            // Validate
-            if (string.IsNullOrEmpty(redirectUrl))
-                throw new Exception("Please provide a valid url to redirect");
+        //public CurrentUserProfile GetTokenAndCurrentUserProfile(string redirectUrl)
+        //{
+        //    // Validate
+        //    if (string.IsNullOrEmpty(redirectUrl))
+        //        throw new Exception("Please provide a valid url to redirect");
 
-            string url = HttpContext.Current.Request.Url.ToString();
-            const string codeString = "code=";
+        //    string url = HttpContext.Current.Request.Url.ToString();
+        //    const string codeString = "code=";
 
-            if (url.Contains(codeString))
-            {
-                // exchange for token
-                int codePosition = url.IndexOf(codeString);
-                string[] info = url.Substring(codePosition + codeString.Length).Split('&');
-                Token token = GetToken(redirectUrl, info[0]);
+        //    if (url.Contains(codeString))
+        //    {
+        //        // exchange for token
+        //        int codePosition = url.IndexOf(codeString);
+        //        string[] info = url.Substring(codePosition + codeString.Length).Split('&');
+        //        Token token = GetToken(redirectUrl, info[0]);
 
-                // get user profile
-                UserProfile userProfile = GetUserProfile(token.access_token, null);
-                CurrentUserProfile currentUserProfile = new CurrentUserProfile
-                {
-                    UserProfile = userProfile,
-                    AgencyName = info[1].Split('=')[1],
-                    AgencyEnvironment = info[2].Split('=')[1],
-                    Token = token
-                };
-                return currentUserProfile;
-            }
-            return null;
-        }
+        //        // get user profile
+        //        UserProfile userProfile = GetUserProfile(token.access_token, null);
+        //        CurrentUserProfile currentUserProfile = new CurrentUserProfile
+        //        {
+        //            UserProfile = userProfile,
+        //            AgencyName = info[1].Split('=')[1],
+        //            AgencyEnvironment = info[2].Split('=')[1],
+        //            Token = token
+        //        };
+        //        return currentUserProfile;
+        //    }
+        //    return null;
+        //}
 
         #region private methods
         private string GetAuthUrlForRedirect(string agencyName, string agencyEnvironment, string redirectUrl, string scope)

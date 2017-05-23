@@ -15,6 +15,9 @@ namespace Accela.Web.SDK
 
         public IConfigurationProvider ConfigProvider { get; protected set; }
 
+        public BaseHandler()
+        { }
+
         private BaseHandler(IConfigurationProvider configProvider)
         {
             ConfigurationReader.Initialize();
